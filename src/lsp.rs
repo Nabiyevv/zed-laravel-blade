@@ -3,13 +3,14 @@ mod language_servers;
 use zed::CodeLabel;
 use zed_extension_api::{self as zed, serde_json, LanguageServerId, Result};
 
-use crate::language_servers::{Emmet, Intelephense, PhpTools, Phpactor};
+use crate::language_servers::{Emmet, Intelephense, PhpTools, Phpactor, LaravelDevTools};
 
 struct BladeExtension {
     intelephense: Option<Intelephense>,
     phpactor: Option<Phpactor>,
     emmet: Option<Emmet>,
     phptools: Option<PhpTools>,
+    laravel_dev_tools: Option<LaravelDevTools>,
 }
 
 impl zed::Extension for BladeExtension {
@@ -19,6 +20,7 @@ impl zed::Extension for BladeExtension {
             phpactor: None,
             emmet: None,
             phptools: None,
+            laravel_dev_tools: None,
         }
     }
 
@@ -38,6 +40,17 @@ impl zed::Extension for BladeExtension {
                 Ok(zed::Command {
                     command: phpactor.language_server_binary_path(language_server_id, worktree)?,
                     args: vec!["language-server".into()],
+                    env: Default::default(),
+                })
+            }
+            LaravelDevTools::LANGUAGE_SERVER_ID => {
+                let laravel_dev_tools = self
+                    .laravel_dev_tools
+                    .get_or_insert_with(LaravelDevTools::new);
+                Ok(zed::Command {
+                    command: laravel_dev_tools
+                        .language_server_binary_path(language_server_id, worktree)?,
+                    args: vec!["lsp".into()],
                     env: Default::default(),
                 })
             }

@@ -32,3 +32,9 @@ language_ids = { Blade = "blade" }
 [language_servers.phpactor]
 name = "Phpactor"
 language = "Blade"
+
+[language_servers.laravel-dev-tools]
+name = "Laravel Dev Tools"
+language = "Blade"
+language_ids = { Blade = "blade" }
+command = ["laravel-dev-tools", "lsp"]
